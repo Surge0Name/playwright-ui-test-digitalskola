@@ -1,45 +1,23 @@
 const { test, expect } = require('@playwright/test');
-const exp = require('constants');
+const { LoginPage } = require("../suacedemo-test/pages/loginpage.js")
+const { DashboardPage } = require("../suacedemo-test/pages/dashboardpage.js")
+const { CartPage } = require("../suacedemo-test/pages/cartpage.js")
 
-test.describe("SauceDemo website test", ()=>{
-  test("Succes LogIn test", async({page})=>{
-    await page.goto("http://www.saucedemo.com/")
-    await page.locator('[id = "user-name"]').fill("standard_user")
-    await page.getByPlaceholder("Password").fill("secret_sauce")
-    await page.getByText("Login").click()
+test("User succesfull login and add item to cart ", async({page})=>{
+  const loginPage = new LoginPage(page);
+  const dashboardPage = new DashboardPage(page);
+  const cartPage = new CartPage(page); 
 
-    await expect(page.getByText("Swag Labs")).toBeVisible()
-    await expect(page.getByRole('button', {name:'Open Menu'})).toBeVisible()
-  });
+  await loginPage.navigate();
+  await loginPage.login('standard_user', 'secret_sauce');
+  console.log("Current URL: ", await page.url()); //debugging url
 
-  test("Validated user berada di dashboard setelah login", async({page})=>{
-    await page.goto("http://www.saucedemo.com/")
-    await page.locator('[id = "user-name"]').fill("standard_user")
-    await page.getByPlaceholder("Password").fill("secret_sauce")
-    await page.getByText("Login").click()
+  const isAtDashboard = await dashboardPage.isUserAtDashboard();
+  expect(isAtDashboard).toBeTruthy();
 
-    await expect(page.getByText("Products")).toBeVisible()
-  });
+  await dashboardPage.addItemToCart();
 
-  test("Add item to cart", async({page})=>{
-    await page.goto("http://www.saucedemo.com/")
-    await page.locator('[id = "user-name"]').fill("standard_user")
-    await page.getByPlaceholder("Password").fill("secret_sauce")
-    await page.getByText("Login").click()
-
-    await page.getByText("Add to cart", {exact:true}).first().click()
-    await expect(page.locator('.shopping_cart_badge')).toHaveText('1')
-  });
-
-  test("Validate item dalam cart", async({page})=>{
-    await page.goto("http://www.saucedemo.com/")
-    await page.locator('[id = "user-name"]').fill("standard_user")
-    await page.getByPlaceholder("Password").fill("secret_sauce")
-    await page.getByText("Login").click()
-
-    await page.getByText("Add to cart", {exact:true}).first().click()
-
-    await page.locator('.shopping_cart_link').click()
-    await expect(page.getByText("Sauce Labs BackPack")).toBeVisible()
-  });
-});
+  await cartPage.navigateToCart();
+  const isItemInCart = await cartPage.isItemAddedToCart();
+  expect(isItemInCart).toBeTruthy();
+})
