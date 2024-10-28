@@ -8,12 +8,18 @@ class LoginPage{
 
     async navigate(){
         await this.page.goto("https://www.saucedemo.com");
+        await this.page.screenshot({ path: 'screenshot/loginPage.png' });
     }
 
+    async captureScreenshot(){
+        const screenshot_path = process.env.SCREENSHOT_PATH || 'screenshots';
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+        await this.page.screenshot({ path: `${screenshot_path}/loginPage_${timestamp}.png` });
+    }
     async login(username, password){
         await this.username.fill(username);
         await this.passInput.fill(password);
         await this.loginButton.click();
     }
 }
-module.exports = {LoginPage};
+module.exports = { LoginPage };

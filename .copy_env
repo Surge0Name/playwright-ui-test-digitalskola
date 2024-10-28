@@ -1,0 +1,13 @@
+# .copy_env
+
+# URL dasar untuk aplikasi
+BASE_URL=
+
+# Username untuk login
+SETUSER=
+
+# Password untuk login
+PASSWORD=
+
+# Path untuk menyimpan screenshot
+SCREENSHOT_PATH=

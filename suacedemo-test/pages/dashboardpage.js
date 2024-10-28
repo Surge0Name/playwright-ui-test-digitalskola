@@ -7,6 +7,13 @@ class DashboardPage{
 
     async isUserAtDashboard(){
         return await this.inventoryContainer.isVisible();
+        
+    }
+
+    async captureScreenshot() {
+        const screenshot_path = process.env.SCREENSHOT_PATH || 'screenshots';
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+        await this.page.screenshot({ path: `${screenshot_path}/DashboardPage_${timestamp}.png` });
     }
 
     async addItemToCart(){
